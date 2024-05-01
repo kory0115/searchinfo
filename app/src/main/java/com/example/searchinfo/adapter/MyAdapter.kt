@@ -5,17 +5,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.searchinfo.data.ImageEntity
+import coil.load
 import com.example.searchinfo.databinding.ViewholderMyBinding
+import com.example.searchinfo.room.RoomEntity
 
-class MyAdapter: ListAdapter<ImageEntity, MyAdapter.ItemViewHolder>(diffUtil) {
+class MyAdapter: ListAdapter<RoomEntity, MyAdapter.ItemViewHolder>(diffUtil) {
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<ImageEntity>() {
-            override fun areItemsTheSame(oldItem: ImageEntity, newItem: ImageEntity): Boolean {
+        val diffUtil = object : DiffUtil.ItemCallback<RoomEntity>() {
+            override fun areItemsTheSame(oldItem: RoomEntity, newItem: RoomEntity): Boolean {
                 return oldItem == newItem
             }
 
-            override fun areContentsTheSame(oldItem: ImageEntity, newItem: ImageEntity): Boolean {
+            override fun areContentsTheSame(oldItem: RoomEntity, newItem: RoomEntity): Boolean {
                 return oldItem == newItem
             }
         }
@@ -31,8 +32,10 @@ class MyAdapter: ListAdapter<ImageEntity, MyAdapter.ItemViewHolder>(diffUtil) {
     }
 
     inner class ItemViewHolder(private val binding: ViewholderMyBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(imageEntity: ImageEntity) {
-
+        fun bind(roomEntity: RoomEntity) {
+            binding.mainImage.load(roomEntity.thumbnailurl)
+            binding.mainTextView.text = roomEntity.collection
+            binding.timeTextView.text = roomEntity.datetime
         }
     }
 }

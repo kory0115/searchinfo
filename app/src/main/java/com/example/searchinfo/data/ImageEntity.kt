@@ -5,8 +5,6 @@ import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
-
-@Entity
 @Parcelize
 data class ImageEntity(
     @SerializedName("collection")
@@ -16,5 +14,5 @@ data class ImageEntity(
     @SerializedName("image_url")
     val imageurl: String,
     @SerializedName("datetime")
-    val datetime: String
+    val datetime: String,
 ): Parcelable
