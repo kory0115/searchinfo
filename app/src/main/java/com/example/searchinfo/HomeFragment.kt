@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +14,7 @@ import com.example.searchinfo.data.ImageEntity
 import com.example.searchinfo.databinding.FragmentHomeBinding
 import com.example.searchinfo.home.HomeViewModel
 import com.example.searchinfo.home.HomeViewModelFactory
+import com.example.searchinfo.preference.SharedPreferences
 import com.example.searchinfo.repository.RetrofitRepository
 import com.example.searchinfo.room.DatabaseProvider
 import com.example.searchinfo.room.RoomEntity
@@ -29,6 +31,9 @@ class HomeFragment : Fragment(), CoroutineScope {
     private lateinit var mainActivity: MainActivity
     private lateinit var adapter : HomeAdapter
     private lateinit var viewModel: HomeViewModel
+
+    private val imme by lazy { requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager }
+    private val prefer by lazy { SharedPreferences(requireContext()) }
     private val db by lazy {  DatabaseProvider.provideDB(requireContext()).searchDao() }
     private val job = Job()
 
@@ -58,7 +63,9 @@ class HomeFragment : Fragment(), CoroutineScope {
     }
 
     private fun initViews() {
-        adapter = HomeAdapter(onClick = {
+        binding.editTextView.setText(prefer.loadData())
+        adapter = HomeAdapter(requireContext(), onClick = {
+            prefer.saveLike(it.first.thumbnailurl, it.second)
             launch {
                 searchItem(it)
             }
@@ -97,6 +104,8 @@ class HomeFragment : Fragment(), CoroutineScope {
 
     private fun bindViews() {
         binding.findButton.setOnClickListener {
+            imme.hideSoftInputFromWindow(binding.editTextView.windowToken, 0)
+            prefer.saveData(binding.editTextView.text.toString())
             initViews()
         }
     }

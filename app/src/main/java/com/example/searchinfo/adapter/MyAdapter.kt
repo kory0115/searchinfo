@@ -9,7 +9,7 @@ import coil.load
 import com.example.searchinfo.databinding.ViewholderMyBinding
 import com.example.searchinfo.room.RoomEntity
 
-class MyAdapter: ListAdapter<RoomEntity, MyAdapter.ItemViewHolder>(diffUtil) {
+class MyAdapter(val onClick : (RoomEntity) -> Unit): ListAdapter<RoomEntity, MyAdapter.ItemViewHolder>(diffUtil) {
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<RoomEntity>() {
             override fun areItemsTheSame(oldItem: RoomEntity, newItem: RoomEntity): Boolean {
@@ -36,6 +36,10 @@ class MyAdapter: ListAdapter<RoomEntity, MyAdapter.ItemViewHolder>(diffUtil) {
             binding.mainImage.load(roomEntity.thumbnailurl)
             binding.mainTextView.text = roomEntity.collection
             binding.timeTextView.text = roomEntity.datetime
+
+            binding.root.setOnClickListener {
+                onClick(roomEntity)
+            }
         }
     }
 }

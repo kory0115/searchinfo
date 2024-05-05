@@ -47,11 +47,17 @@ class MyFragment : Fragment(), CoroutineScope {
 
         initViews()
         bindViews()
+        upDateViews()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initViews() {
-        adapter = MyAdapter()
+        adapter = MyAdapter(onClick = {
+            launch {
+                db.deleteSearch(it.thumbnailurl)
+            }
+            bindViews()
+        })
         binding.myRecyclerview.adapter = adapter
     }
 
@@ -60,6 +66,12 @@ class MyFragment : Fragment(), CoroutineScope {
             getInfo()
         }
         initViews()
+    }
+
+    private fun upDateViews() {
+        binding.actionButton.setOnClickListener {
+            bindViews()
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
