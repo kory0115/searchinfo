@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.searchinfo.adapter.MyAdapter
 import com.example.searchinfo.databinding.FragmentMyBinding
+import com.example.searchinfo.preference.SharedPreferences
 import com.example.searchinfo.room.DatabaseProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,8 @@ class MyFragment : Fragment(), CoroutineScope {
     private var _binding : FragmentMyBinding? = null
     private lateinit var mainActivity: MainActivity
     private lateinit var adapter : MyAdapter
+
+    private val prefer by lazy { SharedPreferences(requireContext()) }
     private val db by lazy { DatabaseProvider.provideDB(requireContext()).searchDao() }
     private val job = Job()
 
@@ -56,6 +59,7 @@ class MyFragment : Fragment(), CoroutineScope {
             launch {
                 db.deleteSearch(it.thumbnailurl)
             }
+            prefer.saveLike(it.thumbnailurl, false)
             bindViews()
         })
         binding.myRecyclerview.adapter = adapter
