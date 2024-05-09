@@ -13,11 +13,10 @@ import com.example.searchinfo.adapter.HomeAdapter
 import com.example.searchinfo.data.ImageEntity
 import com.example.searchinfo.databinding.FragmentHomeBinding
 import com.example.searchinfo.home.HomeViewModel
-import com.example.searchinfo.home.HomeViewModelFactory
 import com.example.searchinfo.preference.SharedPreferences
-import com.example.searchinfo.repository.RetrofitRepository
 import com.example.searchinfo.room.DatabaseProvider
 import com.example.searchinfo.room.RoomEntity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(), CoroutineScope {
     private val binding get() = _binding!!
     private var _binding : FragmentHomeBinding? = null
@@ -71,10 +71,10 @@ class HomeFragment : Fragment(), CoroutineScope {
             }
         })
 
-        val repository = RetrofitRepository()
-        val viewModelFactory = HomeViewModelFactory(repository)
+        //val repository = RetrofitRepository()
+        //val viewModelFactory = HomeViewModelFactory(repository)
 
-        viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
 
         if(binding.editTextView.text.toString().isEmpty()) {
             viewModel.getResult("아이브", "accuracy")

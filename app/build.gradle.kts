@@ -3,7 +3,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id ("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    id ("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
     id ("kotlin-parcelize")
 }
 
@@ -69,4 +70,9 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+
+    implementation("com.google.dagger:hilt-android:2.48")
+    ksp("com.google.dagger:hilt-compiler:2.48")
+    ksp("com.google.dagger:dagger-compiler:2.48")
+
 }
