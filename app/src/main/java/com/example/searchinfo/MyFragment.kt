@@ -7,30 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.searchinfo.adapter.MyAdapter
 import com.example.searchinfo.databinding.FragmentMyBinding
+import com.example.searchinfo.home.HomeViewModel
 import com.example.searchinfo.preference.SharedPreferences
-import com.example.searchinfo.room.DatabaseProvider
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.coroutines.CoroutineContext
+
 @AndroidEntryPoint
-class MyFragment : Fragment(), CoroutineScope {
+class MyFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding : FragmentMyBinding? = null
     private lateinit var mainActivity: MainActivity
     private lateinit var adapter : MyAdapter
 
     private val prefer by lazy { SharedPreferences(requireContext()) }
-    private val db by lazy { DatabaseProvider.provideDB(requireContext()).searchDao() }
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+    private lateinit var viewModel : HomeViewModel
+    //private val db by lazy { DatabaseProvider.provideDB(requireContext()).searchDao() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -56,10 +50,12 @@ class MyFragment : Fragment(), CoroutineScope {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initViews() {
+        viewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
         adapter = MyAdapter(onClick = {
-            launch {
+            /*launch {
                 db.deleteSearch(it.thumbnailurl)
-            }
+            }*/
+            viewModel.deleteDb(it.thumbnailurl)
             prefer.saveLike(it.thumbnailurl, false)
             bindViews()
         })
@@ -67,9 +63,10 @@ class MyFragment : Fragment(), CoroutineScope {
     }
 
     private fun bindViews() {
-        launch {
+        /*launch {
             getInfo()
-        }
+        }*/
+        getInfo()
         initViews()
     }
 
@@ -80,12 +77,12 @@ class MyFragment : Fragment(), CoroutineScope {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private suspend fun getInfo() = withContext(Dispatchers.IO) {
-        val getData = db.getAll()
-        withContext(Dispatchers.Main) {
-            adapter.submitList(getData)
+    private fun getInfo() {
+        viewModel.getAllDb()
+        viewModel.db.observe(requireActivity(), Observer {
+            adapter.submitList(it)
             adapter.notifyDataSetChanged()
-        }
+        })
     }
 
     companion object {
