@@ -75,4 +75,6 @@ dependencies {
     ksp("com.google.dagger:hilt-compiler:2.48")
     ksp("com.google.dagger:dagger-compiler:2.48")
 
+    implementation ("androidx.paging:paging-runtime-ktx:3.0.1")
+
 }

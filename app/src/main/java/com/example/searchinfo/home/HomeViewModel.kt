@@ -4,11 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.example.searchinfo.data.ImageEntity
 import com.example.searchinfo.data.ImageResponse
 import com.example.searchinfo.repository.RetrofitRepository
 import com.example.searchinfo.repository.RoomRepository
 import com.example.searchinfo.room.RoomEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import javax.inject.Inject
@@ -29,6 +35,19 @@ class HomeViewModel @Inject constructor(
             active.let { data ->
                 _assamble.value = data
             }
+        }
+    }
+
+    private val _pagingResult = MutableStateFlow<PagingData<ImageEntity>>(PagingData.empty())
+    val pagingResult : StateFlow<PagingData<ImageEntity>> = _pagingResult.asStateFlow()
+
+    fun searchImagePaging(query: String, sort: String) {
+        viewModelScope.launch {
+            retrofitRepository.searchImagePaging(query, sort)
+                .cachedIn(viewModelScope)
+                .collect {
+                    _pagingResult.value = it
+                }
         }
     }
 
